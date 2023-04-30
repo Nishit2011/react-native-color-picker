@@ -5,7 +5,7 @@ import ColorBox from '../components/ColorBox';
 
 const ColorPalette = ({route}) => {
 const {colors, paletteName} = route.params
-
+console.log(colors, paletteName)
   return (
     <SafeAreaView>
     <View style={styles.container}>
