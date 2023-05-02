@@ -5,8 +5,9 @@ import {FlatList, StyleSheet, RefreshControl, TouchableOpacity, Text} from 'reac
 import PalettePreview from '../components/PalettePreview';
 
 
-const Home = ({navigation}) => {
+const Home = ({navigation, route}) => {
 
+const newColorPalette = route?.params?.newColorPalette
 const [colorPalettes, setColorPalettes] = useState([])
 const [loading, setLoading] = useState(false)
 
@@ -32,12 +33,25 @@ const handleRefresh = useCallback(async()=>{
   
 },[])
 
+useEffect(()=>{
+    if(newColorPalette){
+        setColorPalettes(palettes => [newColorPalette, ...palettes])
+    }
+},[newColorPalette])
+
 
 return (
+<>
+    <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('ColorPaletteModal')}
+      >
+        <Text style={styles.buttonText}>Add a color scheme</Text>
+      </TouchableOpacity>
 
     <FlatList 
         data={colorPalettes}
-        style={style.list}
+        style={styles.list}
         keyExtractor={item=> item.paletteName}
         renderItem={({item}) => (     
             <PalettePreview 
@@ -46,14 +60,13 @@ return (
                 colorPalette={item}
             />   
         )}
-      refreshing={loading}
-      onRefresh={handleRefresh}
-       ListHeaderComponent={
-       <TouchableOpacity onPress={()=> navigation.navigate('ColorPaletteModal')}>
-        <Text>Launch Modal</Text>
-       </TouchableOpacity>
-       }
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+        }
+   
+     
     />
+    </>
   
       
     
@@ -61,11 +74,22 @@ return (
 
 }
 
-const style = StyleSheet.create({
-    list:{
-        padding: 10,
-        backgroundColor: 'white'
-    }
-})
+const styles = StyleSheet.create({
+    list: {
+      flex: 1,
+      padding: 10,
+      backgroundColor: 'white',
+    },
+    button: {
+      height: 50,
+      backgroundColor: 'white',
+      padding: 10,
+    },
+    buttonText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: 'teal',
+    },
+  });
 
 export default Home
